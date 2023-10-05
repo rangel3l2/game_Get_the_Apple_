@@ -56,8 +56,8 @@ addEventListener('load', moveBasketWithGestures)
   
   function moveBasketWithGestures() {
     if (basketCurrentPosition > (columns * rows) - columns &&
-     basketCurrentPosition < (columns * rows) - 1) {      
-      updateMove();
+        basketCurrentPosition < (columns * rows) - 1) {      
+        updateMove();
     
     }
   
@@ -101,7 +101,7 @@ addEventListener('load', moveBasketWithGestures)
     }
   }
   
-function keepApple() {
+function toKeepApple() {
   
     if(appleCurrentPosition === basketCurrentPosition){
         squares[appleCurrentPosition].classList.remove('apple')
@@ -115,17 +115,21 @@ function fallApple() {
         squares[appleCurrentPosition].classList.remove('apple');
         appleCurrentPosition += columns; 
         squares[appleCurrentPosition].classList.add('apple');
-        keepApple() 
+        toKeepApple() 
        
     } else {
      
         endGame('lost')
-    }
-  
-
-   
+    }   
 }
+
 function endGame(status) {
+    const valorEmPixels = 962; // Altere este valor para o que deseja calcular
+    const larguraDaTelaEmPixels = window.innerWidth; // Largura da tela em pixels
+
+    // Calcule a porcentagem
+    const porcentagem = (valorEmPixels / larguraDaTelaEmPixels) * 100;
+    console.log(porcentagem, 'px');
     container.innerHTML  = ''
     const cardEndGame = document.createElement('h2')
     container.appendChild(cardEndGame)
@@ -139,10 +143,13 @@ function endGame(status) {
         clearInterval(appleInterval)
         clearInterval(requestInterval)
     }
-    
+    setTimeout(() => {
+        document.location.reload() 
+     }, 4000);
+ }
 
 
-}
+
 const appleInterval = setInterval(fallApple, 1000)
 
 
