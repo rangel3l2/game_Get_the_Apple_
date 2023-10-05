@@ -19,7 +19,7 @@ function createBoard(){
 }
 createBoard()
 
-let appleCurrentPosition = 2
+let appleCurrentPosition =  Math.floor(Math.random() * 8);
 squares[appleCurrentPosition].classList.add('apple')
 let basketCurrentPosition = 27
 squares[basketCurrentPosition].classList.add('basket') 
@@ -48,34 +48,43 @@ function moveBasket(e){
 
 } 
 addEventListener('keydown',moveBasket)
-function eatApple() {
-    console.log(' apple',appleCurrentPosition,basketCurrentPosition)
+function keepApple() {
+  
     if(appleCurrentPosition === basketCurrentPosition){
         squares[appleCurrentPosition].classList.remove('apple')
         squares[basketCurrentPosition].classList.add('basket')
+        endGame('win')
     }
     
 }
 function fallApple() {
-    if (appleCurrentPosition < columns * (rows - 1)) { // Verifique se a maçã não está na última linha
+    if (appleCurrentPosition < columns * (rows - 1)) { 
         squares[appleCurrentPosition].classList.remove('apple');
-        appleCurrentPosition += columns; // Mova a maçã uma linha para baixo
+        appleCurrentPosition += columns; 
         squares[appleCurrentPosition].classList.add('apple');
-        eatApple() 
-    
+        keepApple() 
+       
     } else {
-        clearInterval(appleInterval); // Pare o intervalo se a maçã atingir a última linha
-        endGame()
+     
+        endGame('lost')
     }
   
 
    
 }
-function endGame() {
+function endGame(status) {
     container.innerHTML  = ''
     const cardEndGame = document.createElement('h2')
     container.appendChild(cardEndGame)
-    cardEndGame.innerText = 'Fim de jogo'
+    if(status == 'win'){
+        cardEndGame.innerText = 'Você Ganhou'
+        clearInterval(appleInterval)
+    }
+    else{
+        cardEndGame.innerText = 'Voce Perdeu'
+        clearInterval(appleInterval)
+    }
+    
 
 
 }
