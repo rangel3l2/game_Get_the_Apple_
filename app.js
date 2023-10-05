@@ -55,18 +55,17 @@ addEventListener('load', moveBasketWithGestures)
 
   
   function moveBasketWithGestures() {
-    if (basketCurrentPosition > (columns * rows) - columns &&
+    if (basketCurrentPosition > (columns * rows) - columns -1 &&
         basketCurrentPosition < (columns * rows) - 1) {      
         updateMove();
     
-    }
-  
+    } 
     
       
   
-    requestInterval = setInterval(updateMove, 1000);
+    requestInterval = setInterval(updateMove, 100);
   }
-
+  let previous_quantity = null
   async function updateMove() {
     try {
       let response = await response_handler();
@@ -77,8 +76,9 @@ addEventListener('load', moveBasketWithGestures)
       
       console.log(position,basketCurrentPosition, 'quantity_fingers', quantity_fingers)
       
-          if(position == 'Left' 
-      && (basketCurrentPosition - quantity_fingers) > (rows * columns) - columns){
+      if(position == 'Left' 
+      && (basketCurrentPosition - quantity_fingers) > (rows * columns) - columns -1
+      &&  previous_quantity != quantity_fingers){
         squares[basketCurrentPosition].classList.remove('basket');
         basketCurrentPosition -= quantity_fingers ;
         squares[basketCurrentPosition].classList.add('basket');
@@ -86,11 +86,12 @@ addEventListener('load', moveBasketWithGestures)
       }
     
       if(position == 'Right'    
-      &&(basketCurrentPosition + quantity_fingers) < rows * columns -1){
-        previous_quantity = quantity_fingers
+      &&(basketCurrentPosition + quantity_fingers) < rows * columns -1 
+      && previous_quantity != quantity_fingers){       
         squares[basketCurrentPosition].classList.remove('basket');
         basketCurrentPosition += quantity_fingers ;
         squares[basketCurrentPosition].classList.add('basket');
+        previous_quantity = quantity_fingers
         
       }
    
@@ -106,7 +107,7 @@ function toKeepApple() {
     if(appleCurrentPosition === basketCurrentPosition){
         squares[appleCurrentPosition].classList.remove('apple')
         squares[basketCurrentPosition].classList.add('basket')
-        endGame('win')
+        endGame('won')
     }
     
 }
@@ -124,16 +125,12 @@ function fallApple() {
 }
 
 function endGame(status) {
-    const valorEmPixels = 962; // Altere este valor para o que deseja calcular
-    const larguraDaTelaEmPixels = window.innerWidth; // Largura da tela em pixels
-
-    // Calcule a porcentagem
-    const porcentagem = (valorEmPixels / larguraDaTelaEmPixels) * 100;
-    console.log(porcentagem, 'px');
-    container.innerHTML  = ''
-    const cardEndGame = document.createElement('h2')
-    container.appendChild(cardEndGame)
-    if(status == 'win'){
+   let cardEndGame;
+    setTimeout(()=>{
+      container.innerHTML  = ''
+      cardEndGame = document.createElement('h2')
+      container.appendChild(cardEndGame)
+      if(status == 'won'){
         cardEndGame.innerText = 'Você Ganhou'
         clearInterval(appleInterval)
         clearInterval(requestInterval)
@@ -146,16 +143,20 @@ function endGame(status) {
     setTimeout(() => {
         document.location.reload() 
      }, 4000);
+    },1000) 
+   
+   
+
  }
 
 
 
-const appleInterval = setInterval(fallApple, 1000)
+const appleInterval = setInterval(fallApple, 5000)
 
 
 async function response_handler() {
     try {
-      const response = await fetch('http://192.168.1.106:5000/get_direction');
+      const response = await fetch('http://192.168.0.113:5000/get_direction');
       
       if (!response.ok) {
         throw new Error('Erro na requisição: ' + response.status);
