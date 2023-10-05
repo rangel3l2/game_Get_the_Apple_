@@ -23,7 +23,8 @@ let appleCurrentPosition = 2
 squares[appleCurrentPosition].classList.add('apple')
 let basketCurrentPosition = 27
 squares[basketCurrentPosition].classList.add('basket') 
-function moveBasket(e){
+
+function moveBasketKeyBoard(e){
     e.preventDefault()
     console.log(e.keyCode)
     switch (e.keyCode){
@@ -48,6 +49,11 @@ function moveBasket(e){
 
 } 
 addEventListener('keydown',moveBasket)
+function moveBasketWithHands(){
+
+    let position =ckeckApiData()
+
+ }
 function eatApple() {
     console.log(' apple',appleCurrentPosition,basketCurrentPosition)
     if(appleCurrentPosition === basketCurrentPosition){
@@ -80,14 +86,16 @@ function endGame() {
 
 }
 const appleInterval = setInterval(fallApple, 1000)
-
-req = new XMLHttpRequest()
-req.addEventListener('load', response_handler)
-req.open('GET','http://192.168.0.113:5000/get_direction')
-req.send()
-function response_handler(){
-    console.log(this.responseText)
-}    
+const requestInterval = setInterval(response_handler, 400)
+function response_handler(){ 
+    req = new XMLHttpRequest()
+    req.addEventListener('load', response_handler)
+    req.open('GET','http://192.168.0.113:5000/get_direction')
+    req.send()
+    return this.responseText
+    
+}
+  
 
 
 
