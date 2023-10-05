@@ -4,10 +4,8 @@ grid.classList.add('grid')
 container.appendChild(grid)
 let rows = 4
 let columns = 8
-
-// 15 rows
-// 33 columns
 let squares = []
+
 function createBoard(){
     for(let i = 0 ; i< rows * columns; i++ ){
         const square = document.createElement('div')
@@ -23,6 +21,7 @@ let appleCurrentPosition =  Math.floor(Math.random() * 8);
 squares[appleCurrentPosition].classList.add('apple')
 let basketCurrentPosition = 27
 squares[basketCurrentPosition].classList.add('basket') 
+
 function moveBasket(e){
     e.preventDefault()
     console.log(e.keyCode)
@@ -53,10 +52,12 @@ function keepApple() {
     if(appleCurrentPosition === basketCurrentPosition){
         squares[appleCurrentPosition].classList.remove('apple')
         squares[basketCurrentPosition].classList.add('basket')
-        endGame('win')
-    }
-    
+        endGame('won')
+    }    
 }
+
+const appleInterval = setInterval(fallApple, 1000)
+
 function fallApple() {
     if (appleCurrentPosition < columns * (rows - 1)) { 
         squares[appleCurrentPosition].classList.remove('apple');
@@ -67,16 +68,13 @@ function fallApple() {
     } else {
      
         endGame('lost')
-    }
-  
-
-   
+    }   
 }
 function endGame(status) {
     container.innerHTML  = ''
     const cardEndGame = document.createElement('h2')
     container.appendChild(cardEndGame)
-    if(status == 'win'){
+    if(status == 'won'){
         cardEndGame.innerText = 'Você Ganhou'
         clearInterval(appleInterval)
     }
@@ -84,19 +82,11 @@ function endGame(status) {
         cardEndGame.innerText = 'Voce Perdeu'
         clearInterval(appleInterval)
     }
-    
-
 
 }
-const appleInterval = setInterval(fallApple, 1000)
 
-req = new XMLHttpRequest()
-req.addEventListener('load', response_handler)
-req.open('GET','http://192.168.0.113:5000/get_direction')
-req.send()
-function response_handler(){
-    console.log(this.responseText)
-}    
+
+ 
 
 
 

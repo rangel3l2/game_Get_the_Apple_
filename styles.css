@@ -12,18 +12,20 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    background-color: #f1f5f7;
+    
     
 }
 .grid{
     border: 1px solid black;
-    width: 962px;
-    height: 480px;
+    width: 75.2%;
+    height: 70%;
     display: flex;
     flex-wrap: wrap;
 }
 .square{
-    width: 120px;
-    height: 120px;
+    width: 12.5%;
+    height: 25%;
     border: 1px solid black;
 }
 .basket{
