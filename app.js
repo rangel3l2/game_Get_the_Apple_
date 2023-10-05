@@ -19,18 +19,18 @@ function createBoard(){
 }
 createBoard()
 
-let appleCurrentPosition = 2
+let appleCurrentPosition =  Math.floor(Math.random() * 8);
 squares[appleCurrentPosition].classList.add('apple')
 let basketCurrentPosition = 27
 squares[basketCurrentPosition].classList.add('basket') 
 
-function moveBasketKeyBoard(e){
+function moveBasketKeyboard(e){
     e.preventDefault()
     console.log(e.keyCode)
     switch (e.keyCode){
         //left
         case 37:
-            if (basketCurrentPosition > columns * rows - columns ){
+            if (basketCurrentPosition > (columns * rows) - columns ){
                 squares[basketCurrentPosition].classList.remove('basket')
                 basketCurrentPosition -= 1
                 squares[basketCurrentPosition].classList.add('basket')
@@ -48,55 +48,118 @@ function moveBasketKeyBoard(e){
     }
 
 } 
-addEventListener('keydown',moveBasket)
-function moveBasketWithHands(){
+addEventListener('keydown',moveBasketKeyboard)
+addEventListener('load', moveBasketWithGestures)
 
-    let position =ckeckApiData()
+ 
 
- }
-function eatApple() {
-    console.log(' apple',appleCurrentPosition,basketCurrentPosition)
+  
+  function moveBasketWithGestures() {
+    if (basketCurrentPosition > (columns * rows) - columns &&
+     basketCurrentPosition < (columns * rows) - 1) {      
+      updateMove();
+    
+    }
+  
+    
+      
+  
+    requestInterval = setInterval(updateMove, 1000);
+  }
+
+  async function updateMove() {
+    try {
+      let response = await response_handler();
+      response = response.split(',')
+      let position = response[0]
+      let quantity_fingers = parseInt(response[1])
+      
+      
+      console.log(position,basketCurrentPosition, 'quantity_fingers', quantity_fingers)
+      
+          if(position == 'Left' 
+      && (basketCurrentPosition - quantity_fingers) > (rows * columns) - columns){
+        squares[basketCurrentPosition].classList.remove('basket');
+        basketCurrentPosition -= quantity_fingers ;
+        squares[basketCurrentPosition].classList.add('basket');
+        previous_quantity = quantity_fingers
+      }
+    
+      if(position == 'Right'    
+      &&(basketCurrentPosition + quantity_fingers) < rows * columns -1){
+        previous_quantity = quantity_fingers
+        squares[basketCurrentPosition].classList.remove('basket');
+        basketCurrentPosition += quantity_fingers ;
+        squares[basketCurrentPosition].classList.add('basket');
+        
+      }
+   
+      // Agora você pode usar a resposta aqui
+    } catch (erro) {
+      console.error(erro);
+      // Lide com o erro aqui
+    }
+  }
+  
+function keepApple() {
+  
     if(appleCurrentPosition === basketCurrentPosition){
         squares[appleCurrentPosition].classList.remove('apple')
         squares[basketCurrentPosition].classList.add('basket')
+        endGame('win')
     }
     
 }
 function fallApple() {
-    if (appleCurrentPosition < columns * (rows - 1)) { // Verifique se a maçã não está na última linha
+    if (appleCurrentPosition < columns * (rows - 1)) { 
         squares[appleCurrentPosition].classList.remove('apple');
-        appleCurrentPosition += columns; // Mova a maçã uma linha para baixo
+        appleCurrentPosition += columns; 
         squares[appleCurrentPosition].classList.add('apple');
-        eatApple() 
-    
+        keepApple() 
+       
     } else {
-        clearInterval(appleInterval); // Pare o intervalo se a maçã atingir a última linha
-        endGame()
+     
+        endGame('lost')
     }
   
 
    
 }
-function endGame() {
+function endGame(status) {
     container.innerHTML  = ''
     const cardEndGame = document.createElement('h2')
     container.appendChild(cardEndGame)
-    cardEndGame.innerText = 'Fim de jogo'
+    if(status == 'win'){
+        cardEndGame.innerText = 'Você Ganhou'
+        clearInterval(appleInterval)
+        clearInterval(requestInterval)
+    }
+    else{
+        cardEndGame.innerText = 'Voce Perdeu'
+        clearInterval(appleInterval)
+        clearInterval(requestInterval)
+    }
+    
 
 
 }
 const appleInterval = setInterval(fallApple, 1000)
-const requestInterval = setInterval(response_handler, 400)
-function response_handler(){ 
-    req = new XMLHttpRequest()
-    req.addEventListener('load', response_handler)
-    req.open('GET','http://192.168.0.113:5000/get_direction')
-    req.send()
-    return this.responseText
-    
-}
-  
 
+
+async function response_handler() {
+    try {
+      const response = await fetch('http://192.168.1.106:5000/get_direction');
+      
+      if (!response.ok) {
+        throw new Error('Erro na requisição: ' + response.status);
+      }
+      
+      const data = await response.text();
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }  
 
 
 
