@@ -86,7 +86,7 @@ addEventListener('load', moveBasketWithGestures)
       }
     
       if(position == 'Right'    
-      &&(basketCurrentPosition + quantity_fingers) < rows * columns -1 
+      &&(basketCurrentPosition + quantity_fingers) < rows * columns 
       && previous_quantity != quantity_fingers){       
         squares[basketCurrentPosition].classList.remove('basket');
         basketCurrentPosition += quantity_fingers ;
@@ -151,12 +151,12 @@ function endGame(status) {
 
 
 
-const appleInterval = setInterval(fallApple, 5000)
+const appleInterval = setInterval(fallApple, 100000)
 
 
 async function response_handler() {
     try {
-      const response = await fetch('http://192.168.0.113:5000/get_direction');
+      const response = await fetch('http://192.168.1.106:5000/get_direction');
       
       if (!response.ok) {
         throw new Error('Erro na requisição: ' + response.status);
